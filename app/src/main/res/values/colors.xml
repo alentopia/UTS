@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="yellow">#FFC801</color>
+
+    <color name="home">#1194AA</color>
+    <color name="profile">#583787</color>
+
+    <color name="home_20">#331194AA</color>
+    <color name="profile_20">#335B37B7</color>
+    <!-- Warna utama aplikasi -->
+    <color name="primary">#C9A7EB</color> <!-- pastel ungu muda -->
+    <color name="primaryDark">#A779E9</color> <!-- ungu agak lebih tua -->
+    <color name="accent">#F9D5E5</color> <!-- pink pastel lembut -->
+
+    <!-- Warna netral -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="lightGray">#E0E0E0</color>
+
+    <!-- Warna emosi (opsional untuk hasil deteksi) -->
+    <color name="happy">#FFE082</color>   <!-- kuning pastel -->
+    <color name="sad">#81D4FA</color>     <!-- biru pastel -->
+    <color name="angry">#FFAB91</color>   <!-- merah pastel -->
+    <color name="neutral">#B2DFDB</color> <!-- hijau pastel -->
+</resources>

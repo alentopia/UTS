@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1065322835387",
+    "project_id": "kitacobaduluges",
+    "storage_bucket": "kitacobaduluges.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065322835387:android:731cd9ccb30e445a87e89e",
+        "android_client_info": {
+          "package_name": "com.example.testing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Zy71il2xS7qKA8-bW8051COtjPsXQqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
