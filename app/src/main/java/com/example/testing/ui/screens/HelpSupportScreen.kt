@@ -1,6 +1,5 @@
 package com.example.testing.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,8 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,27 +31,27 @@ fun HelpSupportScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔙 Top Bar
+            // 🔙 Back Button + Title
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(top = 8.dp)
             ) {
                 IconButton(
                     onClick = { navController.popBackStack() },
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color.White.copy(alpha = 0.8f))
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color(0xFF8B4CFC)
+                        tint = Color(0xFF8B4CFC),
+                        modifier = Modifier.size(24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 Text(
                     text = "Help & Support",
                     fontWeight = FontWeight.Bold,
@@ -63,14 +60,16 @@ fun HelpSupportScreen(navController: NavController) {
                 )
             }
 
-            // 🧭 Header Icon
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // 🧭 Header Icon + Subtitle
             Icon(
                 imageVector = Icons.Default.Help,
                 contentDescription = null,
                 tint = Color(0xFF8B4CFC),
                 modifier = Modifier.size(70.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 "Need some help?",
                 fontWeight = FontWeight.Bold,
@@ -78,14 +77,14 @@ fun HelpSupportScreen(navController: NavController) {
                 color = Color(0xFF4B4453)
             )
             Text(
-                "Find answers to common questions or contact us directly.",
+                "Find quick answers to common issues or contact our team for assistance.",
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             // 📘 FAQ Section
             Card(
@@ -104,25 +103,25 @@ fun HelpSupportScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     FAQItem(
+                        question = "Why can’t I use my microphone or location?",
+                        answer = "Please make sure you’ve granted the necessary permissions in your device settings. Without permission, the app cannot access your microphone or location."
+                    )
+
+                    FAQItem(
+                        question = "Why can’t I access the music?",
+                        answer = "You need an active internet connection to stream music. Please check your Wi-Fi or mobile data connection and try again."
+                    )
+
+                    FAQItem(
                         question = "How do I edit my profile?",
-                        answer = "You can edit your profile by tapping the 'Edit Profile Information' option in the Profile tab."
-                    )
-
-                    FAQItem(
-                        question = "How can I enable daily reminders?",
-                        answer = "Toggle the 'Notifications' switch in the Profile page to receive daily journal reminders."
-                    )
-
-                    FAQItem(
-                        question = "I forgot my password. What should I do?",
-                        answer = "You can reset your password from the Sign In page by choosing 'Forgot Password'."
+                        answer = "You can edit your profile by tapping the ‘Edit Profile Information’ option in the Profile tab."
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
-            // 📬 Contact Support
+            // 📬 Contact Support Button
             Button(
                 onClick = { /* TODO: open email or support form */ },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),

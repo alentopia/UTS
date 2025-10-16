@@ -1,22 +1,23 @@
 package com.example.testing.ui.screens
 
-import androidx.compose.animation.*
+import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.draw.clip import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -26,24 +27,26 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController? = null) {
-    val pastelBg = Brush.verticalGradient(
-        colors = listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF))
-    )
+    val scrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(pastelBg)
+            .background(Brush.verticalGradient(listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF))))
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
             // 👋 Greeting
             Column(
@@ -58,46 +61,27 @@ fun HomeScreen(navController: NavController? = null) {
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF44345C)
                 )
+
+                val today = remember {
+                    SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault()).format(Date())
+                }
+
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Here’s your emotional journey 💜",
+                    text = today,
                     fontSize = 15.sp,
                     color = Color(0xFF7D7A8B)
                 )
             }
 
-            // 📊 3 kotak statistik
+            // 3 Kotak statistik
             StatsSection()
 
-            // 🌿 Mood Stability card
+            // Mood Stability Card (padding dirapikan)
             MoodStabilityCard()
 
-            // 💭 Quote
-            Text(
-                "“Small steps every day still move you forward.”",
-                color = Color(0xFF5E5E5E),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-
-            // 🌸 Button
-            Button(
-                onClick = { navController?.navigate("mood_picker") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
-                shape = RoundedCornerShape(28.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Text(
-                    "Record New Mood",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            // Tombol lihat kalender penuh
+            ViewCalendarButton(onClick = { navController?.navigate("mood_calendar") })
         }
     }
 }
@@ -110,41 +94,17 @@ fun StatsSection() {
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        StatCard(
-            icon = "⚡",
-            value = "65",
-            label = "Longest streak",
-            bgColor = Color(0xFFFFFFFF),
-            modifier = Modifier.weight(1f)
-        )
-        StatCard(
-            icon = "🔥",
-            value = "58",
-            label = "Current streak",
-            bgColor = Color(0xFFFFFFFF),
-            modifier = Modifier.weight(1f)
-        )
-        StatCard(
-            icon = "📅",
-            value = "482",
-            label = "Lifetime days",
-            bgColor = Color(0xFFFFFFFF),
-            modifier = Modifier.weight(1f)
-        )
+        StatCard("📔", "24", "Journals Written", Modifier.weight(1f))
+        StatCard("🔥", "58", "Current streak", Modifier.weight(1f))
+        StatCard("📅", "80", "Lifetime days", Modifier.weight(1f))
     }
 }
 
 @Composable
-fun StatCard(
-    icon: String,
-    value: String,
-    label: String,
-    bgColor: Color,
-    modifier: Modifier = Modifier
-) {
+fun StatCard(icon: String, value: String, label: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.height(100.dp),
-        colors = CardDefaults.cardColors(containerColor = bgColor),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -157,22 +117,12 @@ fun StatCard(
         ) {
             Text(text = icon, fontSize = 22.sp)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = value,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color(0xFF44345C)
-            )
-            Text(
-                text = label,
-                fontSize = 12.sp,
-                color = Color(0xFF5E5E5E)
-            )
+            Text(text = value, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFF44345C))
+            Text(text = label, fontSize = 12.sp, color = Color(0xFF5E5E5E))
         }
     }
 }
 
-// 🌿 Mood Stability Card
 @Composable
 fun MoodStabilityCard() {
     val targetValue = 64
@@ -188,7 +138,8 @@ fun MoodStabilityCard() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp),
+            .padding(horizontal = 8.dp)
+            .height(130.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -196,25 +147,17 @@ fun MoodStabilityCard() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFF7EFFF),
-                            Color(0xFFFDFBFF)
-                        )
-                    )
-                )
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 20.dp, vertical = 20.dp),
             contentAlignment = Alignment.Center
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 🔮 Animated circular progress
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(90.dp)) {
-                    Canvas(modifier = Modifier.size(90.dp)) {
+                // 🌀 Circular progress
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
+                    Canvas(modifier = Modifier.size(80.dp)) {
                         val sweepAngle = (animatedValue.value / 100f) * 360f
 
                         drawArc(
@@ -227,10 +170,7 @@ fun MoodStabilityCard() {
 
                         drawArc(
                             brush = Brush.linearGradient(
-                                listOf(
-                                    Color(0xFFB37CFF),
-                                    Color(0xFF8B4CFC)
-                                )
+                                listOf(Color(0xFFB37CFF), Color(0xFF8B4CFC))
                             ),
                             startAngle = -90f,
                             sweepAngle = sweepAngle,
@@ -250,16 +190,12 @@ fun MoodStabilityCard() {
                     }
                 }
 
-                // ✨ Ubah teks biar terasa lebih "menyatu"
+                //  Text
                 Text(
                     buildAnnotatedString {
-                        withStyle(style = SpanStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4B3A64)
-                        )
-                        ) {
-                            append("Mood Stability ")
-                        }
+                        withStyle(
+                            style = SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF4B3A64))
+                        ) { append("Mood Stability ") }
                         withStyle(style = SpanStyle(color = Color(0xFF6D5A85))) {
                             append("— The higher the score, the more stable you are.")
                         }
@@ -273,3 +209,49 @@ fun MoodStabilityCard() {
         }
     }
 }
+
+@Composable
+fun ViewCalendarButton(onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "🗓️", fontSize = 28.sp)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "View Full Mood Calendar",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color(0xFF4A3AFF)
+                    )
+                    Text(
+                        text = "See your emotional journey 💫",
+                        fontSize = 13.sp,
+                        color = Color(0xFF7D7A8B)
+                    )
+                }
+            }
+
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "Go to Calendar",
+                tint = Color(0xFF8B4CFC)
+            )
+        }
+    }
+}
+

@@ -1,5 +1,6 @@
 package com.example.testing.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,202 +17,127 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
 
 @Composable
-fun ProfileScreen(
-    navController: NavController,
-    isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
-) {
+fun ProfileScreen(navController: NavController) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(Color.Transparent, darkIcons = !isDarkTheme)
-        systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = !isDarkTheme)
+        systemUiController.setStatusBarColor(Color.Transparent, darkIcons = true)
+        systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = true)
     }
 
     val firebaseAuth = FirebaseAuth.getInstance()
-
     var showLogoutDialog by remember { mutableStateOf(false) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var showNotifPopup by remember { mutableStateOf(false) }
 
-    val bgGradient = if (isDarkTheme) {
-        Brush.verticalGradient(listOf(Color(0xFF2E2E3A), Color(0xFF1B1B25)))
-    } else {
-        Brush.verticalGradient(listOf(Color(0xFFEADFFB), Color(0xFFD9E8FF)))
-    }
 
-    val textColor = if (isDarkTheme) Color.White else Color.Black
-    val cardColor = if (isDarkTheme) Color(0xFF2A2A3B) else Color.White
-
-    // 🌈 Background utama
+    // 🌈 MAIN CONTENT
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(bgGradient)
             .padding(horizontal = 24.dp)
     ) {
-        // 📱 Konten utama
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 64.dp)
         ) {
-            // 👤 Avatar Section
+            // Avatar Section
             item {
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF8B4CFC).copy(alpha = 0.25f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile Picture",
-                        tint = Color(0xFF8B4CFC),
-                        modifier = Modifier.size(60.dp)
-                    )
+                Box(contentAlignment = Alignment.Center) {
                     Box(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .size(28.dp)
+                            .size(120.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF8B4CFC))
-                            .clickable { navController.navigate("edit_profile") },
+                            .background(
+                                brush = Brush.linearGradient(
+                                    listOf(
+                                        Color(0xFFDCCBFF),
+                                        Color(0xFFEADFFB)
+                                    )
+                                )
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Image(
+                            painter = rememberAsyncImagePainter(
+                                model = "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                            ),
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF2D2D4F))
+                        )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Valen Angellina", fontWeight = FontWeight.Bold, color = textColor)
+                Text(
+                    "Valen Angellina",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFF2C2C2C)
+                )
                 Text(
                     "valen.angellina@email.com | +62 812 3456 7890",
-                    color = if (isDarkTheme) Color.LightGray else Color.Gray,
-                    fontSize = MaterialTheme.typography.bodySmall.fontSize
+                    color = Color(0xFF7A7A7A),
+                    fontSize = 15.sp
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(17.dp))
             }
 
-            // ⚙️ Section 1 — Profile Settings
+
+
+            //  Profile Settings
             item {
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        // ✏️ Edit profile
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { navController.navigate("edit_profile") }
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Edit, contentDescription = null, tint = Color(0xFF8B4CFC))
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Edit profile information", color = textColor)
-                            }
-                        }
-
-                        Divider(color = Color(0xFF4E4E5A).copy(alpha = 0.2f))
-
-                        // 🔔 Notifications toggle
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Notifications, contentDescription = null, tint = Color(0xFF8B4CFC))
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Notifications", color = textColor)
-                            }
-                            Switch(
-                                checked = notificationsEnabled,
-                                onCheckedChange = { isChecked ->
-                                    notificationsEnabled = isChecked
-                                    showNotifPopup = true
-                                },
-                                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF8B4CFC)),
-                                modifier = Modifier.scale(0.9f)
-                            )
-                        }
-                    }
-                }
+                ProfileCard(
+                    title = "Profile Settings",
+                    options = listOf(
+                        SettingItem(Icons.Default.Edit, "Edit Profile") {
+                            navController.navigate("edit_profile")
+                        })
+                )
             }
 
-            // 🌗 Section 2 — Others
+            // 🔐 Account & Security
             item {
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        // 🌙 Theme toggle
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.DarkMode, contentDescription = null, tint = Color(0xFF8B4CFC))
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Dark Mode", color = textColor)
-                            }
-                            Switch(
-                                checked = isDarkTheme,
-                                onCheckedChange = { onThemeChange(it) },
-                                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF8B4CFC)),
-                                modifier = Modifier.scale(0.9f)
-                            )
+                ProfileCard(
+                    title = "Account & Security",
+                    options = listOf(
+                        SettingItem(Icons.Default.Security, "Manage Account") {
+                            navController.navigate("account_security")
                         }
-
-                        Divider(color = Color(0xFF4E4E5A).copy(alpha = 0.2f))
-
-                        // ❓Help
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { navController.navigate("help_support") }
-                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Help, contentDescription = null, tint = Color(0xFF8B4CFC))
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Help & Support", color = textColor)
-                            }
-                        }
-                    }
-                }
+                    )
+                )
             }
 
-            // 🚪 Logout Button
+            // Support
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                ProfileCard(
+                    title = "Support",
+                    options = listOf(
+                        SettingItem(Icons.Default.Help, "Help & Support") {
+                            navController.navigate("help_support")
+                        }
+                    )
+                )
+            }
+
+            // Logout Button
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = { showLogoutDialog = true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
@@ -220,106 +146,70 @@ fun ProfileScreen(
                         .fillMaxWidth()
                         .height(52.dp)
                 ) {
-                    Icon(Icons.Default.Logout, contentDescription = null, tint = Color.White)
+                    Icon(
+                        Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Logout", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }
+    }
 
-        // 🔔 Popup Notification
-        if (showNotifPopup) {
-            Box(
+    //  Logout Dialog Overlay
+    if (showLogoutDialog) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.55f))
+                .systemBarsPadding()
+                .zIndex(999f), // di atas semua
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.35f)),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(0.8f)
+                    .wrapContentHeight()
             ) {
-                Card(
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(0.75f)
-                        .wrapContentHeight()
-                        .padding(24.dp)
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            if (notificationsEnabled) Icons.Default.NotificationsActive else Icons.Default.NotificationsOff,
-                            contentDescription = null,
-                            tint = Color(0xFF8B4CFC),
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            if (notificationsEnabled) "Notifications Enabled" else "Notifications Disabled",
-                            fontWeight = FontWeight.Bold,
-                            color = textColor
-                        )
-                        Text(
-                            if (notificationsEnabled)
-                                "You’ll now receive daily journal reminders."
-                            else
-                                "You’ll no longer receive journal notifications.",
-                            color = if (isDarkTheme) Color.LightGray else Color.Gray,
-                            fontSize = 13.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-
-            // Auto close
-            LaunchedEffect(notificationsEnabled) {
-                delay(2000)
-                showNotifPopup = false
-            }
-        }
-
-        // 🚪 Logout Confirmation Dialog
-        if (showLogoutDialog) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.45f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(0.85f)
-                        .padding(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("Logout Confirmation", fontWeight = FontWeight.Bold, color = textColor)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Are you sure you want to log out?", color = if (isDarkTheme) Color.LightGray else Color.Gray, textAlign = TextAlign.Center)
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            TextButton(onClick = { showLogoutDialog = false }, modifier = Modifier.weight(1f)) {
-                                Text("Cancel", color = if (isDarkTheme) Color.LightGray else Color.Gray)
-                            }
-                            Button(
-                                onClick = {
-                                    showLogoutDialog = false
-                                    firebaseAuth.signOut()
-                                    navController.navigate("signin") {
-                                        popUpTo("home") { inclusive = true }
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Yes", color = Color.White)
-                            }
+                    Text(
+                        "Logout Confirmation",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF222222)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Are you sure you want to log out?",
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        TextButton(
+                            onClick = { showLogoutDialog = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Cancel", color = Color.Gray)
+                        }
+                        Button(
+                            onClick = {
+                                firebaseAuth.signOut()
+                                navController.navigate("signin") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Yes", color = Color.White)
                         }
                     }
                 }
@@ -327,3 +217,57 @@ fun ProfileScreen(
         }
     }
 }
+
+@Composable
+fun ProfileCard(
+    title: String,
+    options: List<SettingItem>,
+) {
+    Column {
+        Text(
+            text = title,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            color = Color(0xFF222222),
+            modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+        )
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column {
+                options.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { item.onClick() }
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                item.icon,
+                                contentDescription = null,
+                                tint = Color(0xFF8B4CFC),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(item.title, color = Color(0xFF333333), fontSize = 15.sp)
+                        }
+                    }
+                    if (index < options.lastIndex)
+                        Divider(color = Color(0xFFECE6FF))
+                }
+            }
+        }
+    }
+}
+
+data class SettingItem(
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val title: String,
+    val onClick: () -> Unit
+)

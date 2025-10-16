@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.testing"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -46,6 +46,8 @@ android {
 
 
 dependencies {
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
     implementation("androidx.compose.material:material-icons-extended")

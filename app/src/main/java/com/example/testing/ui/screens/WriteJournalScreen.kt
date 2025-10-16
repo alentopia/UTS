@@ -46,14 +46,16 @@ fun WriteJournalScreen(
     emoji: String,
     mood: String,
     date: String,
-    onSave: (String, String) -> Unit,
+    onSave: (String, String, String, String) -> Unit,
     onSkip: (String) -> Unit,
     navController: NavController? = null
-) {
+)
+ {
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val coroutineScope = rememberCoroutineScope()
 
+    var journalTitle by remember { mutableStateOf("") }
     var journalText by remember { mutableStateOf("") }
     var manualLocation by remember { mutableStateOf("") }
     var isFetchingLocation by remember { mutableStateOf(false) }
@@ -122,7 +124,26 @@ fun WriteJournalScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 📝 Text area + 🎙️ mic di kanan bawah
+            // 🏷️ Title field
+            OutlinedTextField(
+                value = journalTitle,
+                onValueChange = { journalTitle = it },
+                placeholder = { Text("Write a title...", color = Color.Gray) },
+                singleLine = true,
+                textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 14.dp)
+            )
+
+            // ✍️ Text area + 🎙️ mic
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +153,7 @@ fun WriteJournalScreen(
                 OutlinedTextField(
                     value = journalText,
                     onValueChange = { journalText = it },
-                    placeholder = { Text("Write your thoughts here...") },
+                    placeholder = { Text("Write your thoughts here...", color = Color.Gray) },
                     textStyle = TextStyle(fontSize = 16.sp),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
@@ -146,7 +167,7 @@ fun WriteJournalScreen(
                     ),
                 )
 
-                // 🎙️ Voice note di pojok kanan bawah
+                // 🎙Voice note di pojok kanan bawah
                 IconButton(
                     onClick = { showVoiceDialog = true },
                     modifier = Modifier
@@ -171,11 +192,11 @@ fun WriteJournalScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 📍 Location input
+            // Location input
             OutlinedTextField(
                 value = manualLocation,
                 onValueChange = { manualLocation = it },
-                placeholder = { Text("Enter Location") },
+                placeholder = { Text("Enter Location", color = Color.Gray) },
                 singleLine = true,
                 textStyle = TextStyle(fontSize = 14.sp),
                 shape = RoundedCornerShape(16.dp),
@@ -216,22 +237,23 @@ fun WriteJournalScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFF8B4CFC),
-                    unfocusedBorderColor = Color.LightGray,
-                    cursorColor = Color(0xFF8B4CFC)
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 💾 Save Button
+            //  Save Button
             Button(
                 onClick = {
-                    val finalLocation =
-                        if (manualLocation.isNotBlank()) manualLocation else "Unknown location"
-                    onSave("$journalText\n📍 Location: $finalLocation", currentDate)
+                    val finalTitle = if (journalTitle.isNotBlank()) journalTitle else "No Title"
+                    val finalContent = if (journalText.isNotBlank()) journalText else "No journal content written."
+                    val finalLocation = if (manualLocation.isNotBlank()) manualLocation else "Unknown location"
+                    onSave(finalTitle, finalContent, finalLocation, currentDate)
                 },
+
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
@@ -241,6 +263,7 @@ fun WriteJournalScreen(
             ) {
                 Text("Save", color = Color.White, fontSize = 16.sp)
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -252,7 +275,7 @@ fun WriteJournalScreen(
         }
     }
 
-    // 🎧 Voice Dialog (dipindah ke luar supaya overlay full-screen)
+    // 🎧 Voice Dialog
     if (showVoiceDialog) {
         VoiceDialog(
             isRecording = isRecording,

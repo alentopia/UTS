@@ -1,5 +1,9 @@
 package com.example.testing.ui.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,21 +16,35 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
+    val firebaseAuth = FirebaseAuth.getInstance()
+
+    //  state untuk foto profil
+    var profileImage by remember { mutableStateOf<Uri?>(null) }
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        profileImage = uri
+    }
+
     var name by remember { mutableStateOf("Valen Angellina") }
     var email by remember { mutableStateOf("valen.angellina@email.com") }
     var phone by remember { mutableStateOf("+62 812 3456 7890") }
+    var password by remember { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
     Box(
@@ -39,40 +57,56 @@ fun EditProfileScreen(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔙 Top Bar
+            // Back
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 24.dp)
+                    .padding(vertical = 8.dp)
             ) {
-                IconButton(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.8f))
-                ) {
-                    Icon(
-                        Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF8B4CFC)
-                    )
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF5E4AE3))
                 }
-                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "Edit Profile",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    color = Color(0xFF4B4453)
+                    color = Color(0xFF2D2D2D)
                 )
             }
 
-            // 🧾 Card Container
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Foto profil
+            Box(contentAlignment = Alignment.BottomEnd) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = profileImage ?: "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                    ),
+                    contentDescription = "Profile Picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFDCD6F7))
+                )
+                IconButton(
+                    onClick = { imagePicker.launch("image/*") },
+                    modifier = Modifier
+                        .offset(x = (-6).dp, y = (-6).dp)
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF8B4CFC))
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit Photo", tint = Color.White, modifier = Modifier.size(18.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            //  Card Input
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -84,7 +118,7 @@ fun EditProfileScreen(navController: NavController) {
                     verticalArrangement = Arrangement.Top
                 ) {
                     Text(
-                        "Personal Information",
+                        "Profile Information",
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF6C4BCC),
                         fontSize = 16.sp
@@ -95,9 +129,7 @@ fun EditProfileScreen(navController: NavController) {
                         value = name,
                         onValueChange = { name = it },
                         label = { Text("Full Name") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, contentDescription = "Name", tint = Color(0xFF8B4CFC))
-                        },
+                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF8B4CFC)) },
                         singleLine = true,
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -106,15 +138,14 @@ fun EditProfileScreen(navController: NavController) {
                             focusedLabelColor = Color(0xFF8B4CFC)
                         )
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text("Email Address") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Email, contentDescription = "Email", tint = Color(0xFF8B4CFC))
-                        },
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF8B4CFC)) },
                         singleLine = true,
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -123,16 +154,42 @@ fun EditProfileScreen(navController: NavController) {
                             focusedLabelColor = Color(0xFF8B4CFC)
                         )
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
                         label = { Text("Phone Number") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Phone, contentDescription = "Phone", tint = Color(0xFF8B4CFC))
+                        leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Color(0xFF8B4CFC)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF8B4CFC),
+                            focusedLabelColor = Color(0xFF8B4CFC)
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    //  Ganti Password
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("New Password") },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF8B4CFC)) },
+                        trailingIcon = {
+                            IconButton(onClick = { showPassword = !showPassword }) {
+                                Icon(
+                                    if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = null,
+                                    tint = Color(0xFF8B4CFC)
+                                )
+                            }
                         },
                         singleLine = true,
+                        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -145,7 +202,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 💾 Save Button
+            //  Save Button
             Button(
                 onClick = { showDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
@@ -153,7 +210,6 @@ fun EditProfileScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-                    .shadow(8.dp, RoundedCornerShape(30.dp))
             ) {
                 Icon(Icons.Default.Save, contentDescription = "Save", tint = Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
@@ -162,12 +218,12 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    // 🖤 Custom Confirm Dialog (diluar Box utama biar full-screen overlay)
+    //  Confirmation Dialog
     if (showDialog) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.45f)), // full dim overlay
+                .background(Color.Black.copy(alpha = 0.45f)),
             contentAlignment = Alignment.Center
         ) {
             Card(
@@ -201,18 +257,13 @@ fun EditProfileScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { showDialog = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        TextButton(onClick = { showDialog = false }, modifier = Modifier.weight(1f)) {
                             Text("Cancel", color = Color.Gray)
                         }
                         Button(
                             onClick = {
+                                // Simulasi update Firebase (bisa dihubungkan ke updateProfile nanti)
                                 showDialog = false
                                 navController.popBackStack()
                             },

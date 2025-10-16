@@ -27,7 +27,6 @@ fun ForgotPasswordScreen(navController: NavController) {
     var message by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
 
-    // 🌈 Background gradient — sama kayak SignInScreen
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +43,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔹 Top Section — biar harmonis dengan style login
+            //
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -52,22 +51,22 @@ fun ForgotPasswordScreen(navController: NavController) {
                     .padding(top = 100.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Forgot", color = Color.White.copy(alpha = 0.8f))
+                Text("Forgot", color = Color.White, fontSize = 30.sp,fontWeight = FontWeight.Bold)
                 Text(
                     "Your Password?",
                     color = Color.White,
-                    fontSize = 22.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "We'll send a reset link to your email.",
                     color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 14.sp
+                    fontSize = 17.sp
                 )
             }
 
-            // 🔸 Bottom Section — card putih bulat kayak login
+            // card putih bulat kayak login
             Surface(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
                 color = Color.White,
@@ -84,12 +83,12 @@ fun ForgotPasswordScreen(navController: NavController) {
                         text = "Reset Your Password",
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF3A2E6E),
-                        fontSize = 18.sp
+                        fontSize = 17.sp
                     )
                     Text(
                         "Enter your registered email below to get a password reset link.",
                         color = Color.Gray,
-                        fontSize = 13.sp
+                        fontSize = 15.sp
                     )
 
                     // ✉️ Email
@@ -158,7 +157,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         onClick = { navController.navigate("signin") },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text("Back to Login", color = Color(0xFF7E63FF), fontSize = 13.sp)
+                        Text("Back to Login", color = Color(0xFF7E63FF), fontSize = 17.sp)
                     }
                 }
             }
