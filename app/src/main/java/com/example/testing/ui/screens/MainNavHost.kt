@@ -1,20 +1,13 @@
 package com.example.testing.ui.screens
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
@@ -32,23 +25,27 @@ fun MainNavHost() {
     val systemUiController = rememberSystemUiController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    SideEffect {
-        when (currentRoute) {
-            "signin", "signup", "forgotpassword" -> {
-                systemUiController.setStatusBarColor(Color(0xFF7E63FF), darkIcons = false)
-                systemUiController.setNavigationBarColor(Color.White, darkIcons = true)
-            }
+    // Cek apakah sedang di halaman Auth (signin/signup/forgotpassword)
+    val isAuthScreen = currentRoute?.startsWith("signin") == true ||
+            currentRoute?.startsWith("signup") == true ||
+            currentRoute?.startsWith("forgotpassword") == true
 
-            else -> {
-                systemUiController.setStatusBarColor(Color.Transparent, darkIcons = true)
-                systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = true)
-            }
+    //  Ubah warna system bar sesuai halaman
+    SideEffect {
+        if (isAuthScreen) {
+            systemUiController.setStatusBarColor(Color(0xFF7E63FF), darkIcons = false)
+            systemUiController.setNavigationBarColor(Color.White, darkIcons = true)
+        } else {
+            systemUiController.setStatusBarColor(Color.Transparent, darkIcons = true)
+            systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = true)
         }
     }
 
-    val gradientColors = when (currentRoute) {
-        "signin", "signup", "forgotpassword" -> listOf(Color(0xFF7E63FF), Color.White) //ini untuk system barnya karena beda warna dari isi sama register/login
-        else -> listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF)) //ini utnuk system bar selain di login register
+    // Gradient Background
+    val gradientColors = if (isAuthScreen) {
+        listOf(Color(0xFF7E63FF), Color.White) // ungu dan putih untuk sign in, sign up, dan forgetpassword
+    } else {
+        listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF)) // gradient gitu untuk yg lainny
     }
 
     Box(
@@ -56,58 +53,89 @@ fun MainNavHost() {
             .fillMaxSize()
             .background(Brush.verticalGradient(colors = gradientColors))
     ) {
-        //  Konten utama
         Scaffold(
             containerColor = Color.Transparent,
+            // Bottom nav cuma muncul di halaman utama
             bottomBar = {
-                val showBottomNav = currentRoute in listOf(
-                    "home",
-                    "journal_list",
-                    "music",
-                    "profile",
-                    "mood_calendar"
-                )
-                if (showBottomNav) BottomNavBar(navController = navController)
+                val showBottomNav =
+                    currentRoute?.startsWith("journal_list") == true ||
+                            currentRoute?.startsWith("profile") == true ||
+                            currentRoute in listOf("home", "music", "mood_calendar")
+
+                if (showBottomNav) {
+                    BottomNavBar(navController = navController)
+                }
             }
         ) { innerPadding ->
+
             NavHost(
                 navController = navController,
                 startDestination = "splash",
                 modifier = Modifier.padding(innerPadding)
             ) {
+                //  Splash & Auth
                 composable("splash") { SplashScreen(navController) }
-
-                //  Auth
-                composable("signin") { SignInScreen(navController) }
+                composable(
+                    route = "signin?created={created}",
+                    arguments = listOf(
+                        navArgument("created") { defaultValue = "false" }
+                    )
+                ) { backStackEntry ->
+                    val created = backStackEntry.arguments?.getString("created")?.toBoolean() ?: false
+                    SignInScreen(navController = navController, created = created)
+                }
                 composable("signup") { SignUpScreen(navController) }
                 composable("forgotpassword") { ForgotPasswordScreen(navController) }
 
-                //  Main
-                composable("home") { HomeScreen(navController) }
+                //  Home Tabs
+                composable("home") { HomeScreen(navController, listJurnal) }
                 composable("music") {
                     MusicScreen(
                         clientId = "9ace244d481f48d5b34acea812017a62",
-                        clientSecret = "6bf846d587384642ae370f0700876276"
+                        clientSecret = "6bf846d587384642ae370f0700876276" //ini seharusnya rahasia deh tapi saya bingung kalo saya gak masukkin trus gmn :v
                     )
                 }
-                composable("profile") { ProfileScreen(navController = navController) }
+                composable(
+                    route = "profile?edited={edited}",
+                    arguments = listOf(
+                        navArgument("edited") { defaultValue = "false" }
+                    )
+                ) { backStackEntry ->
+                    val edited = backStackEntry.arguments?.getString("edited")?.toBoolean() ?: false
+                    ProfileScreen(navController = navController, edited = edited)
+                }
+
                 composable("edit_profile") { EditProfileScreen(navController) }
                 composable("account_security") { AccountSecurityScreen(navController) }
                 composable("help_support") { HelpSupportScreen(navController) }
 
-                // 📒 Journal
-                composable("journal_list") {
+                //  Journal List
+                composable(
+                    route = "journal_list?added={added}&edited={edited}",
+                    arguments = listOf(
+                        navArgument("added") { defaultValue = "false" },
+                        navArgument("edited") { defaultValue = "false" }
+                    )
+                ) { backStackEntry ->
+                    val added = backStackEntry.arguments?.getString("added")?.toBoolean() ?: false
+                    val edited = backStackEntry.arguments?.getString("edited")?.toBoolean() ?: false
+
                     JournalListScreen(
                         navController = navController,
                         listJurnal = listJurnal,
+                        added = added,
+                        edited = edited,
                         onAddClick = { navController.navigate("mood_picker") },
                         onDelete = { index ->
                             if (index in listJurnal.indices) listJurnal.removeAt(index)
                         }
                     )
                 }
+
+                // Calendar
                 composable("mood_calendar") { MoodCalendarScreen(navController) }
 
+                // Mood Picker ke Write Journal
                 composable("mood_picker") {
                     MoodPickerScreen(
                         onContinue = { emoji, mood ->
@@ -126,8 +154,7 @@ fun MainNavHost() {
                 ) { backStack ->
                     val emoji = backStack.arguments?.getString("emoji") ?: "😐"
                     val mood = backStack.arguments?.getString("mood") ?: "Neutral"
-                    val date =
-                        SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+                    val date = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
 
                     WriteJournalScreen(
                         emoji = emoji,
@@ -145,7 +172,7 @@ fun MainNavHost() {
                                     date = dateNow
                                 )
                             )
-                            navController.navigate("journal_list") {
+                            navController.navigate("journal_list?added=true") {
                                 popUpTo("journal_list") { inclusive = true }
                             }
                         },
@@ -169,15 +196,16 @@ fun MainNavHost() {
                     )
                 }
 
-
+                //  Journal Detail
                 composable(
-                    "journal_detail/{title}/{content}/{date}/{emoji}/{location}",
+                    "journal_detail/{title}/{content}/{date}/{emoji}/{location}?edited={edited}",
                     arguments = listOf(
                         navArgument("title") { type = NavType.StringType },
                         navArgument("content") { type = NavType.StringType },
                         navArgument("date") { type = NavType.StringType },
                         navArgument("emoji") { type = NavType.StringType },
-                        navArgument("location") { type = NavType.StringType }
+                        navArgument("location") { type = NavType.StringType },
+                        navArgument("edited") { defaultValue = "false" }
                     )
                 ) { entry ->
                     val title = entry.arguments?.getString("title") ?: ""
@@ -185,6 +213,7 @@ fun MainNavHost() {
                     val date = entry.arguments?.getString("date") ?: ""
                     val emoji = entry.arguments?.getString("emoji") ?: ""
                     val location = entry.arguments?.getString("location") ?: ""
+                    val edited = entry.arguments?.getString("edited")?.toBoolean() ?: false
 
                     JournalDetailScreen(
                         title = title,
@@ -192,10 +221,12 @@ fun MainNavHost() {
                         date = date,
                         emoji = emoji,
                         location = location,
+                        edited = edited,
                         navController = navController
                     )
                 }
 
+                // Edit Journal
                 composable(
                     "edit_journal/{title}/{content}/{date}/{emoji}/{location}",
                     arguments = listOf(
@@ -218,14 +249,32 @@ fun MainNavHost() {
                         date = date,
                         emoji = emoji,
                         location = location,
-                        navController = navController
+                        navController = navController,
+                        onSave = { newTitle, newContent, newDate, newLocation ->
+                            val index = listJurnal.indexOfFirst { it.title == title && it.date == date }
+
+                            if (index != -1) {
+                                listJurnal[index] = listJurnal[index].copy(
+                                    title = newTitle,
+                                    content = newContent,
+                                    date = newDate,
+                                    location = newLocation,
+                                    isEdited = true
+                                )
+                            }
+
+                            // nnti dia lempar data ke detail
+                            navController.navigate(
+                                "journal_detail/$newTitle/$newContent/$newDate/$emoji/$newLocation?edited=true"
+                            ) {
+                                popUpTo("journal_detail/$title/$content/$date/$emoji/$location") {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     )
                 }
-
             }
         }
     }
 }
-
-
-

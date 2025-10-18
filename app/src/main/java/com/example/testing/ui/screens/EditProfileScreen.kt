@@ -29,16 +29,15 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
-    val firebaseAuth = FirebaseAuth.getInstance()
+    val firebaseAuth = FirebaseAuth.getInstance() //ini nanti tunggu databse hehe
 
-    //  state untuk foto profil
+    // State untuk foto profil
     var profileImage by remember { mutableStateOf<Uri?>(null) }
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        profileImage = uri
-    }
+    ) { uri: Uri? -> profileImage = uri }
 
+    // State data profil
     var name by remember { mutableStateOf("User") }
     var email by remember { mutableStateOf("user123@email.com") }
     var phone by remember { mutableStateOf("+62 812 3456 7890") }
@@ -56,7 +55,7 @@ fun EditProfileScreen(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Back
+            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -76,7 +75,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Foto profil
+            //  Foto profil
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
                     painter = rememberAsyncImagePainter(
@@ -97,13 +96,18 @@ fun EditProfileScreen(navController: NavController) {
                         .clip(CircleShape)
                         .background(Color(0xFF8B4CFC))
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit Photo", tint = Color.White, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Edit Photo",
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            //  Card Input
+            // Card Input
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -113,8 +117,7 @@ fun EditProfileScreen(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.Top
+                        .padding(24.dp)
                 ) {
                     Text(
                         "Profile Information",
@@ -201,7 +204,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            //  Save Button
+            // tombol Simpan
             Button(
                 onClick = { showDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
@@ -217,7 +220,7 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    //  Confirmation Dialog
+    //  Dialog Konfirmasi
     if (showDialog) {
         Box(
             modifier = Modifier
@@ -260,11 +263,14 @@ fun EditProfileScreen(navController: NavController) {
                         TextButton(onClick = { showDialog = false }, modifier = Modifier.weight(1f)) {
                             Text("Cancel", color = Color.Gray)
                         }
+
                         Button(
                             onClick = {
-                                // Simulasi update Firebase (bisa dihubungkan ke updateProfile nanti)
                                 showDialog = false
-                                navController.popBackStack()
+                                // Navigate balik ke Profile dengan parameter edited
+                                navController.navigate("profile?edited=true") {
+                                    popUpTo("profile") { inclusive = true }
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
                             shape = RoundedCornerShape(16.dp),

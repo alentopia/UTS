@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,8 +29,10 @@ fun EditJournalScreen(
     date: String,
     emoji: String,
     location: String,
-    navController: NavController
-) {
+    navController: NavController,
+    onSave: (String, String, String, String) -> Unit
+)
+ {
     var newTitle by remember { mutableStateOf(title) }
     var newContent by remember { mutableStateOf(content) }
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -185,9 +189,7 @@ fun EditJournalScreen(
                     Box(
                         modifier = Modifier
                             .background(
-                                Brush.horizontalGradient(
-                                    listOf(Color(0xFFBBA8FF), Color(0xFF8B4CFC))
-                                ),
+                                Color(0xFF8B4CFC),
                                 RoundedCornerShape(24.dp)
                             )
                             .fillMaxSize(),
@@ -254,26 +256,26 @@ fun EditJournalScreen(
                             Button(
                                 onClick = {
                                     showConfirmDialog = false
+
+                                    // panggil callback biar data keupdate
+                                    onSave(newTitle, newContent, date, location)
+
+                                    /// balik ke detail
                                     navController.navigate(
-                                        "journal_detail/${newTitle}/${newContent}/${date}/${emoji}/${location}"
+                                        "journal_detail/${newTitle}/${newContent}/${date}/${emoji}/${location}?edited=true"
                                     ) {
-                                        popUpTo(
-                                            "journal_detail/${title}/${content}/${date}/${emoji}/${location}"
-                                        ) {
+                                        popUpTo("journal_detail/${title}/${content}/${date}/${emoji}/${location}") {
                                             inclusive = true
                                         }
                                     }
                                 },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(
-                                        0xFF8B4CFC
-                                    )
-                                ),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
                                 shape = RoundedCornerShape(16.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text("Yes, Save", color = Color.White)
                             }
+
                         }
                     }
                 }

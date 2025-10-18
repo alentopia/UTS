@@ -14,22 +14,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, edited: Boolean = false) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(Color.Transparent, darkIcons = true)
@@ -39,6 +40,23 @@ fun ProfileScreen(navController: NavController) {
     val firebaseAuth = FirebaseAuth.getInstance()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    // Snackbar setup
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Tampilkan snackbar sekali aja saat kembali dari edit_profile
+    LaunchedEffect(edited) {
+        if (edited) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Your profile has been edited")
+                // Hapus query param biar gak tampil terus di halaman lain
+                navController.navigate("profile") {
+                    popUpTo("profile") { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
 
     // MAIN CONTENT
     Box(
@@ -59,14 +77,7 @@ fun ProfileScreen(navController: NavController) {
                         modifier = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
-                            .background(
-                                brush = Brush.linearGradient(
-                                    listOf(
-                                        Color(0xFFDCCBFF),
-                                        Color(0xFFEADFFB)
-                                    )
-                                )
-                            ),
+                            .background(Color(0xFFE9E1FF)),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
@@ -98,8 +109,6 @@ fun ProfileScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(17.dp))
             }
 
-
-
             //  Profile Settings
             item {
                 ProfileCard(
@@ -108,18 +117,6 @@ fun ProfileScreen(navController: NavController) {
                         SettingItem(Icons.Default.Edit, "Edit Profile") {
                             navController.navigate("edit_profile")
                         })
-                )
-            }
-
-            //  Account & Security
-            item {
-                ProfileCard(
-                    title = "Account & Security",
-                    options = listOf(
-                        SettingItem(Icons.Default.Security, "Manage Account") {
-                            navController.navigate("account_security")
-                        }
-                    )
                 )
             }
 
@@ -157,59 +154,94 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
         }
+
+        // Snackbar tampil di bawah layar
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 90.dp),
+            snackbar = { snackbarData ->
+                Surface(
+                    color = Color(0xFFB3E5FC).copy(alpha = 0.9f),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = snackbarData.visuals.message,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        color = Color(0xFF01579B),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        )
     }
 
     //  Logout Dialog Overlay
     if (showLogoutDialog) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.55f))
-                .systemBarsPadding()
-                .zIndex(999f), // di atas semua
-            contentAlignment = Alignment.Center
+        Dialog(
+            onDismissRequest = { showLogoutDialog = false },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false // biar overlay-nya full-screen
+            )
         ) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                shape = RoundedCornerShape(20.dp),
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .wrapContentHeight()
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f)), // full dark background
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(0.82f)
+                        .wrapContentHeight()
                 ) {
-                    Text(
-                        "Logout Confirmation",
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF222222)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "Are you sure you want to log out?",
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        TextButton(
-                            onClick = { showLogoutDialog = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel", color = Color.Gray)
-                        }
-                        Button(
-                            onClick = {
-                                firebaseAuth.signOut()
-                                navController.navigate("signin") {
-                                    popUpTo("home") { inclusive = true }
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Yes", color = Color.White)
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Logout Confirmation",
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF4A4458),
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Are you sure you want to log out?",
+                            color = Color(0xFF666666),
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            TextButton(
+                                onClick = { showLogoutDialog = false },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Cancel", color = Color.Gray)
+                            }
+                            Button(
+                                onClick = {
+                                    firebaseAuth.signOut()
+                                    navController.navigate("signin") {
+                                        popUpTo("home") { inclusive = true }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF8B4CFC)
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Yes", color = Color.White)
+                            }
                         }
                     }
                 }
@@ -218,7 +250,8 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-@Composable
+
+    @Composable
 fun ProfileCard(
     title: String,
     options: List<SettingItem>,

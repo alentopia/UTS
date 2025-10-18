@@ -21,10 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.testing.JurnalModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
@@ -35,33 +39,28 @@ fun JournalListScreen(
     navController: NavController,
     listJurnal: MutableList<JurnalModel> = remember { mutableStateListOf() },
     onAddClick: () -> Unit = {},
-    onDelete: (Int) -> Unit = {}
+    onDelete: (Int) -> Unit = {},
+    added: Boolean = false,
+    edited: Boolean = false
 ) {
-    val dummyData = remember {
-        listOf(
-            JurnalModel(
-                emoji = "😊",
-                mood = "Happy",
-                title = "Felt great this morning!",
-                content = "Habis menang saham 1 Milliar",
-                date = "10:25 AM",
-                location = "Jakarta"
-            ),
-            JurnalModel(
-                emoji = "😔",
-                mood = "Sad",
-                title = "Had a rough day...",
-                content = "Habis Kejedot Dinding",
-                date = "09:42 PM",
-                location = "Tangerang"
-            )
-        )
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(added, edited) {
+        if (added && !edited) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Journal has been added")
+            }
+        }
     }
 
 
-    val displayedList = if (listJurnal.isEmpty()) dummyData else listJurnal
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var searchQuery by remember { mutableStateOf("") }
+    //  State buat dialog konfirmasi delete
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedDeleteIndex by remember { mutableStateOf(-1) }
 
     Box(
         modifier = Modifier
@@ -74,8 +73,7 @@ fun JournalListScreen(
                 .fillMaxSize()
                 .padding(top = 12.dp)
         ) {
-
-            //  Header: Journal + Icon Calendar
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -92,10 +90,7 @@ fun JournalListScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .clickable {
-                            // Arahkan ke layar kalender mood
-                            navController.navigate("mood_calendar")
-                        },
+                        .clickable { navController.navigate("mood_calendar") },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -106,13 +101,13 @@ fun JournalListScreen(
                 }
             }
 
-            //  Kalender Mingguan (Scrollable Horizontal)
+            // Kalender Mingguan
             CalendarJournal(
                 selectedDate = selectedDate,
                 onDateSelected = { selectedDate = it }
             )
 
-            //  Search Bar
+            // Search bar
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -137,28 +132,45 @@ fun JournalListScreen(
                 )
             )
 
-            //  Daftar Journal (scrollable)
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                itemsIndexed(displayedList) { index, journal ->
-                    JournalItemCard(
-                        journal = journal,
-                        onClick = {
-                            navController.navigate(
-                                "journal_detail/${journal.title}/${journal.content}/${journal.date}/${journal.emoji}/${journal.location}"
-                            )
-                        },
-                        onLongPress = { onDelete(index) }
+            // Daftar Journal
+            if (listJurnal.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "You haven’t written any journal yet.\nStart your first one today! ✨",
+                        color = Color(0xFF6A5ACD),
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center
                     )
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    itemsIndexed(listJurnal) { index, journal ->
+                        JournalItemCard(
+                            journal = journal,
+                            onClick = {
+                                navController.navigate(
+                                    "journal_detail/${journal.title}/${journal.content}/${journal.date}/${journal.emoji}/${journal.location}"
+                                )
+                            },
+                            onLongPress = {
+                                selectedDeleteIndex = index
+                                showDeleteDialog = true
+                            }
+                        )
+                    }
                 }
             }
         }
 
-        //  Tombol tambah di kanan bawah
+        // FAB tambah
         FloatingActionButton(
             onClick = onAddClick,
             containerColor = Color(0xFF8B4CFC),
@@ -172,8 +184,114 @@ fun JournalListScreen(
                 tint = Color.White
             )
         }
+
+        // Snackbar tampil di bawah
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 90.dp),
+            snackbar = { snackbarData ->
+                val message = snackbarData.visuals.message
+                val isDelete = message.contains("deleted", ignoreCase = true)
+
+                Surface(
+                    //  warna beda kalau delete
+                    color = if (isDelete) Color(0xFFFFE0E0).copy(alpha = 0.95f) else Color(0xFFE8F8F0).copy(alpha = 0.95f),
+                    shape = RoundedCornerShape(16.dp),
+                    shadowElevation = 0.dp
+                ) {
+                    Text(
+                        text = message,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        color = if (isDelete) Color(0xFFD32F2F) else Color(0xFF3C755F), // teks merah kalau delete
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        )
+
+
+        //  Dialog konfirmasi delete
+        if (showDeleteDialog && selectedDeleteIndex != -1) {
+            Dialog(
+                onDismissRequest = { showDeleteDialog = false },
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                    usePlatformDefaultWidth = false // biar background gelapnya full
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)), // full dark overlay
+                    contentAlignment = Alignment.Center
+                ) {
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(0.82f)
+                            .wrapContentHeight()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Delete Journal?",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF4A4458),
+                                fontSize = 18.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Are you sure you want to delete this?\n Remember — every feeling matters. 💜",
+                                color = Color(0xFF666666),
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                TextButton(
+                                    onClick = { showDeleteDialog = false },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Cancel", color = Color.Gray)
+                                }
+
+                                Button(
+                                    onClick = {
+                                        val index = selectedDeleteIndex
+                                        showDeleteDialog = false
+                                        if (index in listJurnal.indices) {
+                                            onDelete(index)
+                                            coroutineScope.launch {
+                                                snackbarHostState.showSnackbar("Your journal has been deleted")
+                                            }
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFF8B4CFC)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Delete", color = Color.White)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+
+
 
 @Composable
 fun CalendarJournal(
@@ -243,7 +361,6 @@ fun JournalItemCard(
     onClick: () -> Unit,
     onLongPress: () -> Unit
 ) {
-    //isi acak dari tips
     val tipsList = listOf(
         "Connect with nature" to "Spend time outdoors, surrounded by greenery and fresh air",
         "Take deep breaths" to "Pause for a moment and breathe deeply to clear your mind",
@@ -292,8 +409,8 @@ fun JournalItemCard(
                         )
                         Text(
                             text = if (journal.content.isNotBlank()) {
-                                val preview = journal.content.take(40)
-                                preview + if (journal.content.length > 40) "..." else ""
+                                val preview = journal.content.take(15)
+                                preview + if (journal.content.length > 15) "..." else ""
                             } else {
                                 "No Content"
                             },
@@ -301,15 +418,27 @@ fun JournalItemCard(
                             fontSize = 13.sp
                         )
                     }
-
                 }
 
-                Text(
-                    text = journal.date,
-                    color = Color(0xFF999999),
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = journal.date,
+                        color = Color(0xFF999999),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+
+                    // Label kecil "Edited"
+                    if (journal.isEdited == true) {
+                        Text(
+                            text = "Edited",
+                            color = Color(0xFF9E9E9E),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))

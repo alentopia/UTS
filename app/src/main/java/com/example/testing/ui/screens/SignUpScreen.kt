@@ -213,7 +213,8 @@ fun SignUpScreen(navController: NavController) {
                                             .addOnCompleteListener { task ->
                                                 isLoading = false
                                                 if (task.isSuccessful) {
-                                                    navController.navigate("signin") {
+                                                    // ✅ navigasi ke signin + argumen untuk snackbar
+                                                    navController.navigate("signin?created=true") {
                                                         popUpTo("signup") { inclusive = true }
                                                     }
                                                 } else {
@@ -237,7 +238,6 @@ fun SignUpScreen(navController: NavController) {
                             Text("Register", color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
-
                 }
             }
         }

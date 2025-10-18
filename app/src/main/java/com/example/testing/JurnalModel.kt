@@ -6,5 +6,6 @@ data class JurnalModel(
     val title: String,
     val content: String,
     val date: String,
-    val location: String
+    val location: String,
+    var isEdited: Boolean = false
 )

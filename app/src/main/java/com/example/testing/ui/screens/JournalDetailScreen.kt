@@ -1,7 +1,5 @@
 package com.example.testing.ui.screens
 
-import android.R
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,13 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,11 +26,11 @@ fun JournalDetailScreen(
     title: String,
     content: String,
     date: String,
-    location:String,
+    location: String,
     emoji: String,
-    navController: NavController
+    navController: NavController,
+    edited: Boolean = false
 ) {
-    //quotes yang ada dibawah kartu
     val scrollState = rememberScrollState()
     val quotes = listOf(
         "“Every emotion is valid — and every day is progress.”",
@@ -46,11 +44,23 @@ fun JournalDetailScreen(
     )
     val randomQuote = remember { quotes[Random.nextInt(quotes.size)] }
 
+    // Snackbar setup
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Muncul otomatis kalau edited = true
+    LaunchedEffect(edited) {
+        if (edited) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Journal has been edited")
+            }
+        }
+    }
+
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        // tombol atas
+        // Tombol atas
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -58,8 +68,13 @@ fun JournalDetailScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
+            IconButton(onClick = {
+                navController.navigate("journal_list") {
+                    popUpTo("journal_list") { inclusive = true }
+                }
+            }) {
+
+            Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
                     tint = Color(0xFF8B4CFC)
@@ -68,6 +83,7 @@ fun JournalDetailScreen(
 
             IconButton(
                 onClick = {
+                    // Navigasi ke edit screen
                     navController.navigate(
                         "edit_journal/${title}/${content}/${date}/${emoji}/${location}"
                     )
@@ -81,7 +97,7 @@ fun JournalDetailScreen(
             }
         }
 
-        // isi konten
+        // Isi konten jurnal
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -89,7 +105,6 @@ fun JournalDetailScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // emoji + nama emosi
             Text(text = emoji, fontSize = 70.sp)
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -107,7 +122,7 @@ fun JournalDetailScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // box isi jurnal
+            // Box isi jurnal
             Surface(
                 shape = RoundedCornerShape(24.dp),
                 shadowElevation = 6.dp,
@@ -132,7 +147,7 @@ fun JournalDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // random quote di bawah
+            // Random quote
             Text(
                 text = randomQuote,
                 fontSize = 14.sp,
@@ -141,5 +156,28 @@ fun JournalDetailScreen(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
+
+        // Snackbar transparan hijau di bawah layar
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp),
+            snackbar = { snackbarData ->
+                Surface(
+                    color = Color(0xFFE6F2FF).copy(alpha = 0.95f),
+                    shape = RoundedCornerShape(16.dp),
+                    shadowElevation = 4.dp
+                ) {
+                    Text(
+                        text = snackbarData.visuals.message,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        color = Color(0xFF1565C0),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        )
     }
 }

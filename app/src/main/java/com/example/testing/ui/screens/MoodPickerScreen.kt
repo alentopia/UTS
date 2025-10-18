@@ -48,6 +48,7 @@ fun MoodPickerScreen(
     navController: NavController? = null,
     onContinue: (String, String) -> Unit
 ) {
+    //variabel dan  data awal
     val moods = listOf("Angry", "Sad", "Neutral", "Happy", "Loved")
     val emojis = listOf("😡", "😔", "😐", "😊", "😍")
     val colors = listOf(
@@ -59,12 +60,12 @@ fun MoodPickerScreen(
     )
 
     fun Float.toRad(): Float = (this * (PI / 180f)).toFloat()
-    val sweep = 360f / moods.size
-    val rotation = remember { Animatable(0f) }
+    val sweep = 360f / moods.size //ini untuk sudut setiap segmen  roda, karena satu roda full kan lingkaran jadi 360
+    val rotation = remember { Animatable(0f) } // nilai animasi untuk rotasi roda (supaya bisa dirotasi halus).
     val coroutineScope = rememberCoroutineScope()
-    var selectedIndex by remember { mutableStateOf(2) }
+    var selectedIndex by remember { mutableStateOf(2) } //indeks mood yang sedang dipilih
     var lastAngle by remember { mutableStateOf(0f) }
-    var showCameraPopup by remember { mutableStateOf(false) }
+    var showCameraPopup by remember { mutableStateOf(false) } //tampilin popup camera
 
     Box(
         modifier = Modifier
@@ -84,7 +85,7 @@ fun MoodPickerScreen(
 
         //  Gesture rotasi
         val gestureModifier = Modifier.pointerInput(Unit) {
-            detectDragGestures(
+            detectDragGestures( //jd klo diteken dia ngedetect
                 onDragStart = { offset ->
                     lastAngle = atan2(
                         offset.y - size.height / 2,
@@ -96,17 +97,17 @@ fun MoodPickerScreen(
                         change.position.y - size.height / 2,
                         change.position.x - size.width / 2
                     ) * (180f / PI).toFloat()
-                    val delta = currentAngle - lastAngle
+                    val delta = currentAngle - lastAngle // ngehitung perbedaaan sudut lama sama baru
                     lastAngle = currentAngle
                     coroutineScope.launch {
-                        rotation.snapTo(rotation.value + delta)
+                        rotation.snapTo(rotation.value + delta) //trus nambahin hasilny ke sudut baru
                     }
                 },
                 onDragEnd = {
                     coroutineScope.launch {
                         val normalized = ((rotation.value % 360) + 360) % 360
                         val index = ((normalized + sweep / 2) / sweep).toInt() % moods.size
-                        selectedIndex = (moods.size - index) % moods.size
+                        selectedIndex = (moods.size - index) % moods.size //  dia nentuin mood terdekat berdasarkan rotasi terakhir
                     }
                 }
             )
@@ -177,7 +178,7 @@ fun MoodPickerScreen(
         ) {
             Text(text = emojis[selectedIndex], fontSize = 60.sp)
             Text(
-                text = "You feel ${moods[selectedIndex]} today!",
+                text = "You feel ${moods[selectedIndex]} today!", //menampilkan emoji besar dan mood yang sesuai saam apa yang ada di roda
                 fontSize = 18.sp,
                 color = Color.DarkGray,
                 fontWeight = FontWeight.Medium

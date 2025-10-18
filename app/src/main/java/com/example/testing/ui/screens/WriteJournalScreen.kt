@@ -285,7 +285,7 @@ fun WriteJournalScreen(
                     delay(3000)
                     isRecording = false
                     showVoiceDialog = false
-                    journalText += "\n“I had a busy day but I’m grateful.”"
+                    journalText += "I had a busy day but I’m grateful."
                 }
             },
             onCancel = { showVoiceDialog = false }
@@ -400,7 +400,7 @@ fun VoiceDialog(
 }
 
 @Composable
-fun AnimatedWaveform() {
+fun AnimatedWaveform() { //imi yg untuk gambar di mikrofone
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val waveHeights = List(10) { index ->
         infiniteTransition.animateFloat(

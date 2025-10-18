@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SignInScreen(navController: NavController) {
+fun SignInScreen(navController: NavController, created: Boolean = false) {
     val firebaseAuth = FirebaseAuth.getInstance()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -45,6 +45,21 @@ fun SignInScreen(navController: NavController) {
     var stayLoggedIn by remember { mutableStateOf(prefs.getBoolean("stayLoggedIn", false)) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Snackbar setup
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    //  Kalau habis signup, tampilkan snackbar
+    LaunchedEffect(created) {
+        if (created) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Account created successfully!")
+            }
+        }
+    }
+
+
 
     // Background
     Box(
@@ -289,5 +304,28 @@ fun SignInScreen(navController: NavController) {
                 }
             }
         }
+        //  Snackbar
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 270.dp),
+            snackbar = { snackbarData ->
+                Surface(
+                    color = Color(0xFFE8F8F0).copy(alpha = 0.95f),
+                            shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = snackbarData.visuals.message,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        Color(0xFF3C755F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        )
+
     }
+
 }

@@ -2,7 +2,6 @@ package com.example.testing.ui.screens
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -17,7 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip import androidx.compose.ui.graphics.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -27,12 +27,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.testing.JurnalModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController? = null) {
+fun HomeScreen(
+    navController: NavController? = null,
+    listJurnal: List<JurnalModel> = emptyList()
+) {
     val scrollState = rememberScrollState()
 
     Box(
@@ -42,50 +46,120 @@ fun HomeScreen(navController: NavController? = null) {
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            //  Greeting
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Hey, User!",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF44345C)
-                )
+            // Greeting
+            GreetingSection()
 
-                val today = remember {
-                    SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault()).format(Date())
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = today,
-                    fontSize = 15.sp,
-                    color = Color(0xFF7D7A8B)
-                )
-            }
-
-            // 3 Kotak statistik
+            // Statistik (3 kotak)
             StatsSection()
 
-            // Mood Stability Card
+            // Mood Stability
             MoodStabilityCard()
 
-            // Tombol lihat kalender penuh
+            // Tombol lihat kalender
             ViewCalendarButton(onClick = { navController?.navigate("mood_calendar") })
+            // Latest Mood
+            LatestMoodSection(listJurnal = listJurnal)
         }
     }
 }
-//isi dari 3 kotak statistik
+
+@Composable
+fun GreetingSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            text = "Hey, User!",
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF44345C)
+        )
+
+        val today = remember {
+            SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault()).format(Date())
+        }
+
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = today,
+            fontSize = 15.sp,
+            color = Color(0xFF7D7A8B)
+        )
+    }
+}
+
+// --- 🧠 LATEST MOOD SECTION ---
+@Composable
+fun LatestMoodSection(listJurnal: List<JurnalModel>) {
+    val latestJournal = listJurnal.lastOrNull()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            if (latestJournal == null) {
+                // Belum ada mood
+                Text(
+                    text = "You haven’t written any journal yet.",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF4B3A64),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Start your first one today! 💫",
+                    fontSize = 14.sp,
+                    color = Color(0xFF8B4CFC),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                // Sudah ada mood
+                Text(
+                    text = "Your current mood is:",
+                    fontSize = 15.sp,
+                    color = Color(0xFF6A5A95),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = latestJournal.emoji,
+                    fontSize = 50.sp, // emoji besar
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = latestJournal.mood,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4A3AFF)
+                )
+            }
+        }
+    }
+}
+
+// --- Statistik Section ---
 @Composable
 fun StatsSection() {
     Row(
@@ -99,7 +173,7 @@ fun StatsSection() {
         StatCard("📅", "80", "Lifetime days", Modifier.weight(1f))
     }
 }
-//bentuk kartunya
+
 @Composable
 fun StatCard(icon: String, value: String, label: String, modifier: Modifier = Modifier) {
     Card(
@@ -122,7 +196,8 @@ fun StatCard(icon: String, value: String, label: String, modifier: Modifier = Mo
         }
     }
 }
-//isi mood stability card
+
+// --- Mood Stability Card ---
 @Composable
 fun MoodStabilityCard() {
     val targetValue = 64
@@ -190,7 +265,7 @@ fun MoodStabilityCard() {
                     }
                 }
 
-                //  Text
+                // Text
                 Text(
                     buildAnnotatedString {
                         withStyle(
@@ -254,4 +329,3 @@ fun ViewCalendarButton(onClick: () -> Unit) {
         }
     }
 }
-

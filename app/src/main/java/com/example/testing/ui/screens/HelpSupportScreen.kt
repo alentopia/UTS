@@ -103,8 +103,8 @@ fun HelpSupportScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     FAQItem(
-                        question = "Why can’t I use my microphone or location?",
-                        answer = "Please make sure you’ve granted the necessary permissions in your device settings. Without permission, the app cannot access your microphone or location."
+                        question = "Why can’t I use my microphone/location/camera?",
+                        answer = "Please make sure you’ve granted the necessary permissions in your device settings. Without permission, the app cannot access that."
                     )
 
                     FAQItem(
@@ -113,8 +113,8 @@ fun HelpSupportScreen(navController: NavController) {
                     )
 
                     FAQItem(
-                        question = "How do I edit my profile?",
-                        answer = "You can edit your profile by tapping the ‘Edit Profile Information’ option in the Profile tab."
+                        question = "How to delete the journal?",
+                        answer = "You can delete a journal by pressing and holding the one you wish to remove until a confirmation dialog appears."
                     )
                 }
             }

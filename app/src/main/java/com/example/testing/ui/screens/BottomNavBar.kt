@@ -43,7 +43,7 @@ fun BottomNavBar(navController: NavController) {
             .navigationBarsPadding()
             .padding(horizontal = 24.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(30.dp))
-            .background(Color.White.copy(alpha = 0.6f)) // lembut nyatu
+            .background(Color.White.copy(alpha = 0.6f))
             .padding(vertical = 8.dp)
     ) {
         Row(
@@ -52,7 +52,7 @@ fun BottomNavBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { item ->
-                val isSelected = currentDestination == item.route
+                val isSelected = currentDestination?.startsWith(item.route) == true
                 val color by animateColorAsState(
                     targetValue = if (isSelected) selectedColor else unselectedColor,
                     label = "iconColor"

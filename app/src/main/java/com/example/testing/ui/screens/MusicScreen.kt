@@ -132,7 +132,7 @@ fun MusicScreen(
                             TextButton(onClick = {
                                 val intent = Intent(
                                     Intent.ACTION_VIEW,
-                                    Uri.parse("https://open.spotify.com/playlist/04vFVSHKvDSOVC16f2QDtH")
+                                    Uri.parse("https://open.spotify.com/playlist/04vFVSHKvDSOVC16f2QDtH") //ini playlist yang didaftarkan (ini si baru basic doang)
                                 )
                                 context.startActivity(intent)
                             }) {

@@ -39,8 +39,8 @@ fun MoodCalendarScreen(navController: NavController) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
 
     val daysInMonth = currentMonth.lengthOfMonth()
-    val firstDayOfMonth = currentMonth.atDay(1)
-    val dayOfWeekOffset = (firstDayOfMonth.dayOfWeek.value - 1).coerceAtLeast(0)
+    val firstDayOfMonth = currentMonth.atDay(1) // ini biar dia gak ada angka 0 karena calender itu calender sendiri bukan bawaan
+    val dayOfWeekOffset = (firstDayOfMonth.dayOfWeek.value - 1).coerceAtLeast(0) // ini tuh biar dia gak ada 0 nya gitu sih
 
     val moodColors = listOf(
         Color(0xFFFF9AA2),
@@ -54,7 +54,7 @@ fun MoodCalendarScreen(navController: NavController) {
     val moodLabels = listOf("Angry", "Sad", "Neutral", "Happy", "Loved")
     val moodCounts = listOf(60, 28, 55, 113, 86)
 
-    val randomJournalDays = remember(currentMonth) { (1..daysInMonth).shuffled().take(20) }
+    val randomJournalDays = remember(currentMonth) { (1..daysInMonth).shuffled().take(20) } //ini buat ngerandom mood colorsny
 
     Box(
         modifier = Modifier
