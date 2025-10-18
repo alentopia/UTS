@@ -31,7 +31,7 @@ fun HelpSupportScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔙 Back Button + Title
+            //  Back Button + Title
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -62,7 +62,7 @@ fun HelpSupportScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 🧭 Header Icon + Subtitle
+            //  Header Icon + Subtitle
             Icon(
                 imageVector = Icons.Default.Help,
                 contentDescription = null,
@@ -86,7 +86,7 @@ fun HelpSupportScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 📘 FAQ Section
+            // FAQ Section
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
@@ -121,7 +121,7 @@ fun HelpSupportScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 📬 Contact Support Button
+            // Contact Support Button
             Button(
                 onClick = { /* TODO: open email or support form */ },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4CFC)),

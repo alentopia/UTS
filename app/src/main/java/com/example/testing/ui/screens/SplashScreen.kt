@@ -31,7 +31,7 @@ fun SplashScreen(navController: NavController) {
     val alpha = remember { Animatable(0f) }
     val firebaseAuth = FirebaseAuth.getInstance()
 
-    // 🔄 Animasi muncul & navigasi
+    //  Animasi muncul & navigasi
     LaunchedEffect(Unit) {
         scale.animateTo(
             targetValue = 1.1f,
@@ -61,7 +61,7 @@ fun SplashScreen(navController: NavController) {
         }
     }
 
-    // 🌈 Tampilan splash
+    //  Tampilan splash
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -71,7 +71,7 @@ fun SplashScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // 💜 Logo kamu di tengah (pakai gambar)
+            // Logo
             Box(
                 modifier = Modifier
                     .size(170.dp)
@@ -88,7 +88,7 @@ fun SplashScreen(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo), // 🔹 ganti sesuai nama file logomu
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "App Logo",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.size(170.dp)
@@ -97,7 +97,7 @@ fun SplashScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // ✨ Nama aplikasi & tagline
+            //  Nama aplikasi & tagline
             Text(
                 text = "SENTIO",
                 fontSize = 40.sp,

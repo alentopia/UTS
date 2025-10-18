@@ -27,8 +27,8 @@ class SpotifyRepository(
 
     suspend fun getMyPlaylist(): PlaylistResponse = withContext(Dispatchers.IO) {
         val token = getValidToken() // pakai client_credentials
-        val response = webApi.getPlaylist("Bearer $token", "04vFVSHKvDSOVC16f2QDtH") // ID playlist kamu
-        println("✅ Playlist: ${response.name}, ${response.tracks.items.size} lagu")
+        val response = webApi.getPlaylist("Bearer $token", "04vFVSHKvDSOVC16f2QDtH") // ID playlist
+        println(" Playlist: ${response.name}, ${response.tracks.items.size} lagu")
         response
     }
 
@@ -39,7 +39,7 @@ class SpotifyRepository(
             val creds = "$clientId:$clientSecret"
             val encoded = Base64.encodeToString(creds.toByteArray(), Base64.NO_WRAP)
             val result = authApi.getAccessToken("Basic $encoded")
-            println("🔑 Token baru dari Spotify: ${result.access_token.take(30)}...") // log sebagian aja
+            println(" Token baru dari Spotify: ${result.access_token.take(30)}...")
             token = result.access_token
             expiryTime = now + (result.expires_in * 1000)
         }

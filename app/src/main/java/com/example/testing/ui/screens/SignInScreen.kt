@@ -35,7 +35,7 @@ fun SignInScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // 🔹 SharedPreferences untuk menyimpan data login
+    //  SharedPreferences untuk menyimpan data login
     val prefs = context.getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
 
     // State
@@ -46,7 +46,7 @@ fun SignInScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // 🌈 Background gradient
+    // Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +63,7 @@ fun SignInScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔹 Top Section
+            // Top Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +107,7 @@ fun SignInScreen(navController: NavController) {
                 }
             }
 
-            // 🔸 Bottom Section
+            //  Bottom Section
             Surface(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
                 color = Color.White,
@@ -132,7 +132,7 @@ fun SignInScreen(navController: NavController) {
                         fontSize = 13.sp
                     )
 
-                    // ✉️ Email
+                    // Email
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
@@ -147,7 +147,7 @@ fun SignInScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // 🔒 Password
+                    //  Password
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
@@ -177,9 +177,9 @@ fun SignInScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                    // 🔘 Stay Logged In + Forgot Password
+                    // Stay Logged In + Forgot Password
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        // 🔘 Animated Checkbox
+                        //  Animated Checkbox
                         Box(
                             modifier = Modifier
                                 .size(22.dp)
@@ -191,7 +191,7 @@ fun SignInScreen(navController: NavController) {
                                 .clickable { stayLoggedIn = !stayLoggedIn },
                             contentAlignment = Alignment.Center
                         ) {
-                            // ✅ AnimatedVisibility tetap dalam konteks @Composable
+                            //  AnimatedVisibility tetap dalam konteks @Composable
                             androidx.compose.animation.AnimatedVisibility(
                                 visible = stayLoggedIn,
                                 enter = androidx.compose.animation.scaleIn(
@@ -236,7 +236,7 @@ fun SignInScreen(navController: NavController) {
                 }
 
 
-                    // 🔹 Login Button
+                    //  Login Button
                     Button(
                         onClick = {
                             if (email.isNotBlank() && password.isNotBlank()) {
@@ -282,7 +282,7 @@ fun SignInScreen(navController: NavController) {
                         }
                     }
 
-                    // ⚠️ Error
+                    // Error
                     errorMessage?.let {
                         Text(it, color = Color.Red, fontSize = 13.sp, textAlign = TextAlign.Center)
                     }

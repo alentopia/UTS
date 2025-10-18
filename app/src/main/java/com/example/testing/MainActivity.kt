@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             val gradientTop = Color(0xFFEED3F2)
             val gradientBottom = Color(0xFFD1E5FF)
 
-            // 🟣 Atur warna status & nav bar supaya nyatu dengan background gradient
+            //  Atur warna status & nav bar supaya nyatu dengan background
             SideEffect {
                 systemUiController.setStatusBarColor(
                     color = Color.Transparent,

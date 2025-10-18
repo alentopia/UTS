@@ -48,7 +48,7 @@ fun HomeScreen(navController: NavController? = null) {
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            // 👋 Greeting
+            //  Greeting
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,7 +56,7 @@ fun HomeScreen(navController: NavController? = null) {
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Hey, Valen!",
+                    text = "Hey, User!",
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF44345C)
@@ -77,7 +77,7 @@ fun HomeScreen(navController: NavController? = null) {
             // 3 Kotak statistik
             StatsSection()
 
-            // Mood Stability Card (padding dirapikan)
+            // Mood Stability Card
             MoodStabilityCard()
 
             // Tombol lihat kalender penuh
@@ -85,7 +85,7 @@ fun HomeScreen(navController: NavController? = null) {
         }
     }
 }
-
+//isi dari 3 kotak statistik
 @Composable
 fun StatsSection() {
     Row(
@@ -99,7 +99,7 @@ fun StatsSection() {
         StatCard("📅", "80", "Lifetime days", Modifier.weight(1f))
     }
 }
-
+//bentuk kartunya
 @Composable
 fun StatCard(icon: String, value: String, label: String, modifier: Modifier = Modifier) {
     Card(
@@ -122,7 +122,7 @@ fun StatCard(icon: String, value: String, label: String, modifier: Modifier = Mo
         }
     }
 }
-
+//isi mood stability card
 @Composable
 fun MoodStabilityCard() {
     val targetValue = 64
@@ -155,7 +155,7 @@ fun MoodStabilityCard() {
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 🌀 Circular progress
+                // Circular progress
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
                     Canvas(modifier = Modifier.size(80.dp)) {
                         val sweepAngle = (animatedValue.value / 100f) * 360f

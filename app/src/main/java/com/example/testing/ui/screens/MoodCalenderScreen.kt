@@ -62,7 +62,7 @@ fun MoodCalendarScreen(navController: NavController) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center, // tengah layar
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
@@ -81,7 +81,7 @@ fun MoodCalendarScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            // 📅 Calendar Card
+            //  Calendar Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +137,7 @@ fun MoodCalendarScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // 📆 Grid Kalender
+                    //  Grid Kalender
                     AnimatedContent(
                         targetState = currentMonth,
                         transitionSpec = {
@@ -195,7 +195,7 @@ fun MoodCalendarScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 💕 Mood Summary
+            // Mood Summary
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

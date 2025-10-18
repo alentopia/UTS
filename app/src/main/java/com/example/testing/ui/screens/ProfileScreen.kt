@@ -40,7 +40,7 @@ fun ProfileScreen(navController: NavController) {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
 
-    // 🌈 MAIN CONTENT
+    // MAIN CONTENT
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,13 +85,13 @@ fun ProfileScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    "Valen Angellina",
+                    "USER",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     color = Color(0xFF2C2C2C)
                 )
                 Text(
-                    "valen.angellina@email.com | +62 812 3456 7890",
+                    "user.hehehe@email.com | +62 812 3456 7890",
                     color = Color(0xFF7A7A7A),
                     fontSize = 15.sp
                 )
@@ -111,7 +111,7 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
 
-            // 🔐 Account & Security
+            //  Account & Security
             item {
                 ProfileCard(
                     title = "Account & Security",

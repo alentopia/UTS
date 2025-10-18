@@ -31,7 +31,7 @@ fun AccountSecurityScreen(navController: NavController) {
     var verificationCode by remember { mutableStateOf("") }
     var enteredCode by remember { mutableStateOf("") }
 
-    // 🔲 Background utama
+    // Background utama
     Box(modifier = Modifier.fillMaxSize()) {
 
         Column(
@@ -39,7 +39,7 @@ fun AccountSecurityScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            // 🔙 Header
+            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -63,7 +63,7 @@ fun AccountSecurityScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ⚙️ Security toggles (compact style)
+            //  Security toggles (compact style)
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -83,7 +83,8 @@ fun AccountSecurityScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🗑️ Delete Account Section
+
+            //  Delete Account Section
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -117,17 +118,17 @@ fun AccountSecurityScreen(navController: NavController) {
             }
         }
 
-        // 🌫 Blur overlay background for dialogs
+        //  Blur overlay background for dialogs
         if (showDeleteDialog || showVerificationDialog || showGoodbyeDialog) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.45f))
-                    .blur(12.dp) // 🔹 blur efek lembut
+                    .blur(12.dp) //  blur efek lembut
             )
         }
 
-        // 📨 Step 1 — Request verification
+        //  Step 1 — Request verification
         if (showDeleteDialog) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
@@ -155,7 +156,7 @@ fun AccountSecurityScreen(navController: NavController) {
             )
         }
 
-        // 🔢 Step 2 — Enter code
+        //  Step 2 — Enter code
         if (showVerificationDialog) {
             AlertDialog(
                 onDismissRequest = { showVerificationDialog = false },
@@ -187,7 +188,7 @@ fun AccountSecurityScreen(navController: NavController) {
             )
         }
 
-        // 💔 Step 3 — Goodbye popup
+        //  Step 3 — Goodbye popup
         if (showGoodbyeDialog) {
             AlertDialog(
                 onDismissRequest = { showGoodbyeDialog = false },

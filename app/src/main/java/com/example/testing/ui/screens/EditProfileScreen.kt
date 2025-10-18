@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,8 +39,8 @@ fun EditProfileScreen(navController: NavController) {
         profileImage = uri
     }
 
-    var name by remember { mutableStateOf("Valen Angellina") }
-    var email by remember { mutableStateOf("valen.angellina@email.com") }
+    var name by remember { mutableStateOf("User") }
+    var email by remember { mutableStateOf("user123@email.com") }
     var phone by remember { mutableStateOf("+62 812 3456 7890") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }

@@ -66,7 +66,7 @@ fun WriteJournalScreen(
         SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
     }
 
-    // 🔒 Izin lokasi
+    //  Izin lokasi
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
@@ -79,7 +79,7 @@ fun WriteJournalScreen(
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
-        // 🔝 Top bar
+        //  Top bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,7 +104,7 @@ fun WriteJournalScreen(
             }
         }
 
-        // 💜 Main Content
+        //  Main Content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,7 +124,7 @@ fun WriteJournalScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 🏷️ Title field
+            //  Title field
             OutlinedTextField(
                 value = journalTitle,
                 onValueChange = { journalTitle = it },
@@ -143,7 +143,7 @@ fun WriteJournalScreen(
                     .padding(bottom = 14.dp)
             )
 
-            // ✍️ Text area + 🎙️ mic
+            //  Text area +  mic
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,7 +167,7 @@ fun WriteJournalScreen(
                     ),
                 )
 
-                // 🎙Voice note di pojok kanan bawah
+                // Voice note di pojok kanan bawah
                 IconButton(
                     onClick = { showVoiceDialog = true },
                     modifier = Modifier
@@ -275,7 +275,7 @@ fun WriteJournalScreen(
         }
     }
 
-    // 🎧 Voice Dialog
+    // Voice Dialog
     if (showVoiceDialog) {
         VoiceDialog(
             isRecording = isRecording,
@@ -285,7 +285,7 @@ fun WriteJournalScreen(
                     delay(3000)
                     isRecording = false
                     showVoiceDialog = false
-                    journalText += "\n(🎙️ Voice note) “I had a busy day but I’m grateful.”"
+                    journalText += "\n“I had a busy day but I’m grateful.”"
                 }
             },
             onCancel = { showVoiceDialog = false }

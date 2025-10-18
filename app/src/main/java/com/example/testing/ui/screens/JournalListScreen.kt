@@ -93,7 +93,7 @@ fun JournalListScreen(
                         .size(40.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .clickable {
-                            // 🟣 Arahkan ke layar kalender mood
+                            // Arahkan ke layar kalender mood
                             navController.navigate("mood_calendar")
                         },
                     contentAlignment = Alignment.Center
@@ -106,13 +106,13 @@ fun JournalListScreen(
                 }
             }
 
-            // 📅 Kalender Mingguan (Scrollable Horizontal)
+            //  Kalender Mingguan (Scrollable Horizontal)
             CalendarJournal(
                 selectedDate = selectedDate,
                 onDateSelected = { selectedDate = it }
             )
 
-            // 🔍 Search Bar
+            //  Search Bar
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -158,7 +158,7 @@ fun JournalListScreen(
             }
         }
 
-        // 🟣 Tombol tambah di kanan bawah
+        //  Tombol tambah di kanan bawah
         FloatingActionButton(
             onClick = onAddClick,
             containerColor = Color(0xFF8B4CFC),
@@ -243,6 +243,7 @@ fun JournalItemCard(
     onClick: () -> Unit,
     onLongPress: () -> Unit
 ) {
+    //isi acak dari tips
     val tipsList = listOf(
         "Connect with nature" to "Spend time outdoors, surrounded by greenery and fresh air",
         "Take deep breaths" to "Pause for a moment and breathe deeply to clear your mind",

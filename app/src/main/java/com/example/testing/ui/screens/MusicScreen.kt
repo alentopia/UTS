@@ -51,7 +51,7 @@ fun MusicScreen(
         }
     }
 
-    // Background gradient
+    // Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +91,7 @@ fun MusicScreen(
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // 🌟 MINI MUSIC PREVIEW
+                    //  MINI MUSIC PREVIEW
                     if (track != null) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,7 +145,7 @@ fun MusicScreen(
                         }
                     }
 
-                    // 🎵 Judul playlist di bawah preview
+                    //  Judul playlist di bawah preview
                     Text(
                         text = playlist!!.name,
                         fontWeight = FontWeight.ExtraBold,
@@ -160,7 +160,7 @@ fun MusicScreen(
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
 
-                    // 🎶 Daftar lagu
+                    //  Daftar lagu
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxSize()

@@ -36,7 +36,7 @@ fun BottomNavBar(navController: NavController) {
     val selectedColor = Color(0xFF8B4CFC)
     val unselectedColor = Color.Gray.copy(alpha = 0.7f)
 
-    // 💫 ubah background jadi semi-transparan putih pastel
+    //  background navbar
     Box(
         modifier = Modifier
             .fillMaxWidth()

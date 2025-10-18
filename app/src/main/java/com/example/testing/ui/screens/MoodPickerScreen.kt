@@ -51,11 +51,11 @@ fun MoodPickerScreen(
     val moods = listOf("Angry", "Sad", "Neutral", "Happy", "Loved")
     val emojis = listOf("😡", "😔", "😐", "😊", "😍")
     val colors = listOf(
-        Color(0xFFFF9AA2), // Angry
-        Color(0xFFA5D8FF), // Sad
-        Color(0xFFCFC9FF), // Neutral (lavender gray)
-        Color(0xFFB8F2E6), // Happy (mint)
-        Color(0xFFFFB5E8)  // Loved
+        Color(0xFFFF9AA2),
+        Color(0xFFA5D8FF),
+        Color(0xFFCFC9FF),
+        Color(0xFFB8F2E6),
+        Color(0xFFFFB5E8)
     )
 
     fun Float.toRad(): Float = (this * (PI / 180f)).toFloat()
@@ -82,7 +82,7 @@ fun MoodPickerScreen(
             Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF8B4CFC))
         }
 
-        // 🎯 Gesture rotasi
+        //  Gesture rotasi
         val gestureModifier = Modifier.pointerInput(Unit) {
             detectDragGestures(
                 onDragStart = { offset ->
@@ -112,7 +112,7 @@ fun MoodPickerScreen(
             )
         }
 
-        // 🎡 Mood Wheel
+        //  Mood Wheel
         Canvas(
             modifier = Modifier
                 .size(310.dp)
@@ -168,7 +168,7 @@ fun MoodPickerScreen(
             drawPath(path, Color(0xFF8B4CFC))
         }
 
-        // 😄 Teks mood
+        //  Teks mood
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -184,7 +184,7 @@ fun MoodPickerScreen(
             )
         }
 
-        // 🔘 Tombol
+        //  Tombol
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

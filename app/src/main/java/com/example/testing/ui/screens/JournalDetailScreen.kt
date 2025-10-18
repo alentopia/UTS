@@ -32,6 +32,7 @@ fun JournalDetailScreen(
     emoji: String,
     navController: NavController
 ) {
+    //quotes yang ada dibawah kartu
     val scrollState = rememberScrollState()
     val quotes = listOf(
         "“Every emotion is valid — and every day is progress.”",
@@ -48,11 +49,6 @@ fun JournalDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF))
-                )
-            )
     ) {
         // tombol atas
         Row(

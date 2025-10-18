@@ -43,7 +43,6 @@ fun ForgotPasswordScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,7 +90,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         fontSize = 15.sp
                     )
 
-                    // ✉️ Email
+                    // Email
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
@@ -106,7 +105,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // 🔹 Send Reset Link Button
+                    // Send Reset Link Button
                     Button(
                         onClick = {
                             if (email.isNotBlank()) {
@@ -139,7 +138,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         }
                     }
 
-                    // ⚠️ Status Message
+                    // Status Message
                     message?.let {
                         Text(
                             it,
@@ -152,7 +151,7 @@ fun ForgotPasswordScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // 🔙 Back to Login
+                    // Back to Login
                     TextButton(
                         onClick = { navController.navigate("signin") },
                         modifier = Modifier.align(Alignment.CenterHorizontally)

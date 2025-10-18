@@ -47,8 +47,8 @@ fun MainNavHost() {
     }
 
     val gradientColors = when (currentRoute) {
-        "signin", "signup", "forgotpassword" -> listOf(Color(0xFF7E63FF), Color.White)
-        else -> listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF))
+        "signin", "signup", "forgotpassword" -> listOf(Color(0xFF7E63FF), Color.White) //ini untuk system barnya karena beda warna dari isi sama register/login
+        else -> listOf(Color(0xFFEED3F2), Color(0xFFD1E5FF)) //ini utnuk system bar selain di login register
     }
 
     Box(

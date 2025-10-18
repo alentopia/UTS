@@ -37,7 +37,7 @@ fun SignUpScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // 🌈 Background gradient
+    //  Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +54,7 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔹 Top Section: Header dan switch tab
+            // Top Section: Header dan switch tab
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -98,7 +98,7 @@ fun SignUpScreen(navController: NavController) {
                 }
             }
 
-            // 🔸 Bottom Section: White Card (Form Registrasi)
+            //  Bottom Section: White Card (Form Registrasi)
             Surface(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
                 color = Color.White,
@@ -123,7 +123,7 @@ fun SignUpScreen(navController: NavController) {
                         fontSize = 13.sp
                     )
 
-                    // ✉️ Email
+                    // Email
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
@@ -138,7 +138,7 @@ fun SignUpScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // 🔒 Password
+                    // Password
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
@@ -162,7 +162,7 @@ fun SignUpScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // 🔁 Confirm Password
+                    // Confirm Password
                     OutlinedTextField(
                         value = confirmPassword,
                         onValueChange = { confirmPassword = it },
@@ -186,7 +186,7 @@ fun SignUpScreen(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // ⚠️ Error Message
+                    //  Error Message
                     errorMessage?.let {
                         Text(
                             text = it,
@@ -196,7 +196,7 @@ fun SignUpScreen(navController: NavController) {
                         )
                     }
 
-                    // 💜 Register Button
+                    // Register Button
                     Button(
                         onClick = {
                             when {
